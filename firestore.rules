@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function owner() { return signedIn() && resource.data.user_id == request.auth.uid; }
+    match /users/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    match /teachers/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    match /lesson_plans/{id} {
+      allow read, create, update, delete: if signedIn() && (request.resource.data.user_id == request.auth.uid || resource.data.user_id == request.auth.uid);
+    }
+    match /ai_generations/{id} {
+      allow read, create: if signedIn() && request.resource.data.user_id == request.auth.uid;
+    }
+    match /{collection}/{id} {
+      allow read, write: if signedIn() && request.auth.uid == request.resource.data.user_id;
+    }
+  }
+}

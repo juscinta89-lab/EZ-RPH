@@ -1,0 +1,4 @@
+'use client'
+import {useEffect,useState} from 'react'
+import {apiFetch} from '@/lib/firebase/request'
+export default function CalendarPage(){const [data,setData]=useState<any[]>([]);useEffect(()=>apiFetch('/api/rph').then(r=>r.json()).then(setData),[]);const grouped=data.reduce((a,p)=>{(a[p.date]??=[]).push(p);return a},{} as Record<string,any[]>);return <div className="page"><div className="page-header"><div><p className="eyebrow">KALENDAR</p><h1>Kalendar RPH</h1><p className="muted">Hijau lengkap · kuning draf · merah belum dibuat.</p></div></div><div className="calendar-grid">{Object.entries(grouped).map(([d,items])=><div className="calendar-day card" key={d}><b>{d}</b>{(items as any[]).map((p:any)=><div key={p.id} className={`calendar-item ${p.status||'draft'}`}><span>{p.subject}</span><small>{p.topic}</small></div>)}</div>)}</div></div>}

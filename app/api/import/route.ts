@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server'
+import {adminDb,verifyRequestUser} from '@/lib/firebase/admin'
+export async function POST(request:Request){try{const u=await verifyRequestUser(request);const b=await request.json();if(!['standards','textbooks','academic_calendar'].includes(b.table))return NextResponse.json({error:'Jenis import tidak sah'},{status:400});await adminDb.collection('import_jobs').add({user_id:u.uid,table:b.table,status:'received',created_at:new Date().toISOString()});return NextResponse.json({message:`Data ${b.table} diterima untuk validasi/import.`})}catch(e:any){return NextResponse.json({error:e.message},{status:401})}}

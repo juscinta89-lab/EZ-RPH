@@ -1,0 +1,7 @@
+'use client'
+import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { auth } from '@/lib/firebase/client'
+const nav=[['Dashboard','/dashboard'],['RPH Saya','/rph'],['Kalendar','/calendar'],['Jadual Waktu','/timetable'],['Kelas','/classes'],['Subjek','/subjects'],['DSKP','/dskp'],['Buku Teks','/textbooks'],['Takwim','/academic-calendar'],['AI Assistant','/ai'],['Laporan','/reports'],['Tetapan','/settings']]
+export function AppShell({children}:{children:React.ReactNode}){const path=usePathname();useEffect(()=>{return onAuthStateChanged(auth,u=>{if(!u)location.href='/login'})},[]);async function logout(){await signOut(auth);location.href='/login'}return <div className="app-shell"><aside className="sidebar"><div className="brand-mark">e-RPH <span>AI</span></div><div className="tagline">RPH Pintar. PdP Lebih Terancang.</div><nav>{nav.map(([label,href])=><a className={path===href?'active':''} href={href} key={href}>{label}</a>)}</nav><button className="ghost full" onClick={logout}>Log keluar</button></aside><div className="mobile-top"><div className="brand-mark">e-RPH <span>AI</span></div></div><main className="main-content">{children}</main><div className="bottom-nav">{[['Home','/dashboard'],['RPH','/rph'],['Calendar','/calendar'],['AI','/ai'],['More','/settings']].map(([l,h])=><a href={h} key={h} className={path.startsWith(h)?'active':''}>{l}</a>)}</div></div>}
